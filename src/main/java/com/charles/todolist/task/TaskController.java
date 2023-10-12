@@ -47,12 +47,9 @@ public class TaskController {
     // http://localhost:8080/tasks/89234723-cdgasdasd-54894151
     @PutMapping("/{id}")
     public TaskModel update(@RequestBody TaskModel taskModel, HttpServletRequest request, @PathVariable UUID id){
-        var idUser = request.getAttribute("idUser");
-
         var task = this.taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
 
         Utils.copyNonNullProperties(taskModel, task);
-
 
         return this.taskRepository.save(task);
     }
