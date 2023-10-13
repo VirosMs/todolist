@@ -38,7 +38,12 @@ public class TaskController {
         var task = this.taskRepository.save(taskModel);
         return ResponseEntity.status(HttpStatus.OK).body(task);
     }
-
+    /**
+     * <a href="http://localhost:8080/tasks/89234723-cdgasdasd-54894151">...</a>
+     *
+     * @param request request
+     * @return ResponseEntity
+     */
     @GetMapping("/")
     public List<TaskModel> list(HttpServletRequest request){
         var idUser = request.getAttribute("idUser");
@@ -46,12 +51,24 @@ public class TaskController {
     }
     // http://localhost:8080/tasks/89234723-cdgasdasd-54894151
     @PutMapping("/{id}")
-    public TaskModel update(@RequestBody TaskModel taskModel, HttpServletRequest request, @PathVariable UUID id){
-        var task = this.taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
+    public ResponseEntity update(@RequestBody TaskModel taskModel, HttpServletRequest request, @PathVariable UUID id){
+        var task = this.taskRepository.findById(id).orElse(null);
+
+        if(task == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found this task");
+        }
+
+        var idUser = request.getAttribute("idUser");
+
+        if(!task.getUserId().equals(idUser)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User Unauthorized to update this task");
+        }
 
         Utils.copyNonNullProperties(taskModel, task);
 
-        return this.taskRepository.save(task);
+        var taskUpdated = this.taskRepository.save(task);
+
+        return ResponseEntity.status(HttpStatus.OK).body(taskUpdated);
     }
 
 

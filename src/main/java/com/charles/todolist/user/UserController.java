@@ -27,9 +27,9 @@ public class UserController {
             //Status Code
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário já existe");
         }
-        var passwprdHashred = BCrypt.withDefaults().hashToString(12, userModel.getPassword().toCharArray());
+        var passwordHashred = BCrypt.withDefaults().hashToString(12, userModel.getPassword().toCharArray());
 
-        userModel.setPassword(passwprdHashred);
+        userModel.setPassword(passwordHashred);
 
         var userCreated = this.userRepository.save(userModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(userCreated);
